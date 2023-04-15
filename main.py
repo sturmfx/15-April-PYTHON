@@ -61,11 +61,12 @@ def update_game():
 
 
 def restart_game(event):
-    global score, missed, speed, lives, wood, circle
+    global score, missed, speed, lives, wood, circle, delta_speed
     score = 0
     missed = 0
     speed = 5
     lives = 3
+    delta_speed = 2
     canvas.delete("all")
     wood = canvas.create_rectangle(0, wood_start_y, wood_width, canvas_height, fill="brown")
     circle = canvas.create_oval(0, 0, circle_size, circle_size, fill="red")
