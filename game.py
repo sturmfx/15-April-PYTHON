@@ -26,6 +26,7 @@ player_y = HEIGHT/2
 
 class Target:
     def __init__(self):
+        self.lives = True
         self.x = random.randint(TARGET_RADIUS, WIDTH - TARGET_RADIUS)
         self.y = random.randint(TARGET_RADIUS, WIDTH - TARGET_RADIUS)
         self.dx = random.choice([-SPEED, SPEED])
@@ -66,13 +67,12 @@ while running:
     pygame.draw.circle(screen, BLUE, (player_x, player_y), PLAYER_RADIUS)
 
     for target in targets:
-        target.move()
-        target.draw(screen)
-
-        distance = ((player_x - target.x) ** 2 + (player_y - target.y) ** 2) ** 0.5
-        if distance < PLAYER_RADIUS + TARGET_RADIUS:
-            targets.remove(target)
-            targets.append(Target())
+        if target.lives:
+            target.move()
+            target.draw(screen)
+            distance = ((player_x - target.x) ** 2 + (player_y - target.y) ** 2) ** 0.5
+            if distance < PLAYER_RADIUS + TARGET_RADIUS:
+                target.lives = False
     pygame.display.flip()
     clock.tick(FPS)
 
