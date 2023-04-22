@@ -23,6 +23,13 @@ FPS = 60
 player_x = WIDTH/2
 player_y = HEIGHT/2
 
+pygame.font.init()
+font = pygame.font.Font(None, 36)
+text_color = (0, 0, 0)
+start_ticks = pygame.time.get_ticks()
+score = 0
+elapsed_time = 0
+
 
 class Target:
     def __init__(self):
@@ -73,6 +80,18 @@ while running:
             distance = ((player_x - target.x) ** 2 + (player_y - target.y) ** 2) ** 0.5
             if distance < PLAYER_RADIUS + TARGET_RADIUS:
                 target.lives = False
+                score = score + 1
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+    average_time = elapsed_time / score if score > 0 else 0
+
+    score_text = font.render(f"Score: {score}", True, text_color)
+    elapsed_time_text = font.render(f"Elapsed time: {elapsed_time} seconds", True, text_color)
+    average_time_text = font.render(f"Average time per target: {average_time} seconds per target", True, text_color)
+
+    screen.blit(score_text, (10,10))
+    screen.blit(elapsed_time_text, (10, 50))
+    screen.blit(average_time_text, (10, 90))
+    
     pygame.display.flip()
     clock.tick(FPS)
 
