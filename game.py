@@ -24,7 +24,7 @@ player_x = WIDTH/2
 player_y = HEIGHT/2
 
 pygame.font.init()
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 20)
 text_color = (0, 0, 0)
 start_ticks = pygame.time.get_ticks()
 score = 0
@@ -64,34 +64,38 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        player_x = player_x - PLAYER_SPEED
+        player_x = max(player_x - PLAYER_SPEED, PLAYER_RADIUS)
     if keys[pygame.K_RIGHT]:
-        player_x = player_x + PLAYER_SPEED
+        player_x = min(player_x + PLAYER_SPEED, WIDTH - PLAYER_RADIUS)
     if keys[pygame.K_UP]:
-        player_y = player_y - PLAYER_SPEED
+        player_y = max(player_y - PLAYER_SPEED, PLAYER_RADIUS)
     if keys[pygame.K_DOWN]:
-        player_y = player_y + PLAYER_SPEED
+        player_y = min(player_y + PLAYER_SPEED, HEIGHT - PLAYER_RADIUS)
     pygame.draw.circle(screen, BLUE, (player_x, player_y), PLAYER_RADIUS)
-
+    live_targets = 0
     for target in targets:
         if target.lives:
+            live_targets = live_targets + 1
             target.move()
             target.draw(screen)
             distance = ((player_x - target.x) ** 2 + (player_y - target.y) ** 2) ** 0.5
-            if distance < PLAYER_RADIUS + TARGET_RADIUS:
+            if distance < PLAYER_RADIUS + TARGET_RADIUS and elapsed_time > 10:
                 target.lives = False
                 score = score + 1
-    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
-    average_time = elapsed_time / score if score > 0 else 0
+    while live_targets < 3:
+        targets.append(Target())
+        live_targets = live_targets + 1
+    elapsed_time = int((pygame.time.get_ticks() - start_ticks) / 1000)
+    average_time = int(elapsed_time / score if score > 0 else 0)
 
     score_text = font.render(f"Score: {score}", True, text_color)
     elapsed_time_text = font.render(f"Elapsed time: {elapsed_time} seconds", True, text_color)
     average_time_text = font.render(f"Average time per target: {average_time} seconds per target", True, text_color)
 
     screen.blit(score_text, (10,10))
-    screen.blit(elapsed_time_text, (10, 50))
-    screen.blit(average_time_text, (10, 90))
-    
+    screen.blit(elapsed_time_text, (10, 30))
+    screen.blit(average_time_text, (10, 50))
+
     pygame.display.flip()
     clock.tick(FPS)
 
